@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>RepRapFirmware.org</title>
+		<link href="css/bootstrap.min.css" rel="stylesheet">
+		<link href="css/bootstrap-theme.min.css" rel="stylesheet">
+		<link href="css/page.css" rel="stylesheet">
+	</head>
+	<body>
+		<nav class="navbar navbar-inverse navbar-fixed-top">
+			<div class="container">
+				<div class="navbar-header">
+					<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+						<span class="sr-only">Toggle navigation</span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<a class="navbar-brand" href="javascript:void(0);"><span class="glyphicon glyphicon-tint"></span> RepRapFirmware</a>
+				</div>
+				<div id="navbar" class="collapse navbar-collapse">
+					<ul class="nav navbar-nav">
+						<li class="home"><a href="/">Home</a></li>
+						<li class="visible-lg"><a href="https://configtool.reprapfirmware.org">Config Tool</a></li>
+						<li class="active visible-lg emf"><a href="javascript:goTo('emf');">EMF Calculator</a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Software <span class="caret"></span></a>
+							<ul class="dropdown-menu">
+								<li><a href="https://github.com/Duet3D/RepRapFirmware">RepRapFirmware on GitHub</a></li>
+								<li><a href="https://github.com/Duet3D/DuetWebControl">DuetWebControl on GitHub</a></li>
+							</ul>
+						</li>
+						<li><a href="https://duet3d.dozuki.com">Documentation</a></li>
+						<li><a href="https://www.duet3d.com/forum">Forum</a></li>
+						<li><a href="https://www.duet3d.com/products">Compatible Boards</a></li>
+					</ul>
+				</div>
+			</div>
+		</nav>
+
+		<!-- Home -->
+		<div id="div_home" class="container hidden">
+			<h1>Welcome to RepRapFirmware.org</h1>
+
+			<p id="description">RepRapFirmware is a comprehensive motion control firmware intended primarily for controlling 3D printers, but with applications in laser engraving/cutting and CNC too. Unlike most other 3D printer firmwares, it is targeted only at modern 32-bit processors, not outdated 8-bit processors with limited CPU power. So it is designed to make good use of the power of modern inexpensive ARM processors to implement advanced features.
+			<br/><br/>
+			RepRapFirmware was the first open-source firmware to implement significant advances in 3D printing, including:
+			</p>
+
+			<ul>
+				<li>Support for mixing extruders (July 2014)</li>
+				<li>Precise timing of step pulses, even during acceleration (December 2014)</li>
+				<li>Accurate extruder pressure advance, including retraction before the end of a move when needed (December 2014)</li>
+				<li>Simulation mode, to enable accurate print times to be predicted (January 2015)</li>
+				<li>Segmentation-free delta motion (January 2015)</li>
+				<li>Least-squares auto calibration of delta printers (April 2015)</li>
+				<li>Support for SPI-controlled stepper drivers (August 2016)</li>
+				<li>Heater power compensated for changes in supply voltage (November 2017)</li>
+			</ul>
+
+			<p id="caption">If you wish, you can either create a configuration for your machine or find out what stepper motor suits your application best:</p>
+
+			<div class="row">
+				<a href="https://configtool.reprapfirmware.org">
+					<div class="col-md-4">
+						<div class="well well-lg">
+							<h2><span class="glyphicon glyphicon-cog"></span> Config Tool</h2>
+							<p class="text-muted">Wizard to create an exclusive configuration for your machine</p>
+						</div>
+					</div>
+				</a>
+
+				<a href="javascript:goTo('emf');">
+					<div class="col-md-4">
+						<div class="well well-lg">
+							<h2><span class="glyphicon glyphicon-scale"></span> EMF Calculator</h2>
+							<p class="text-muted">Calculate the supply voltage needed by your stepper motors</p>
+
+						</div>
+					</div>
+				</a>
+
+				<a href="https://www.duet3d.com/index.php?route=common/home#products">
+					<div class="col-md-4">
+						<div class="well well-lg">
+							<h2><span class="glyphicon glyphicon-tasks"></span> Compatible Boards</h2>
+							<p class="text-muted">See which boards support the latest version of RepRapFirmware</p>
+						</div>
+					</div>
+				</a>
+			</div>
+
+			<div id="footer" class="text-section">
+				<p class="text-muted"><em>This site does not use cookies.</em></p>
+			</div>
+		</div>
+
+		<!-- EMF Calculator -->
+		<div id="div_emf" class="container">
+			<h1>EMF Calculator</h1>
+
+			<form autocomplete="off" action="javascript:void(0);">
+				<h3>Machine configuration</h3>
+				<div class="row">
+					<div class="col-md-2">
+						<label for="geometry">Printer geometry:</label>
+						<select id="geometry" class="form-control">
+							<option value="1" selected>Cartesian</option>
+							<option value="1.414">CoreXY</option>
+							<option value="1.7">Delta</option>
+						</select>
+					</div>
+					<div class="col-md-2">
+						<label for="supply_voltage">Supply voltage:</label>
+						<div class="input-group">
+							<input type="number" id="supply_voltage" class="form-control" value="12" min="5" max="25" step="any" required="required" title="Usually 12 or 24">
+							<span class="input-group-addon">V</span>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<label for="motor_current">Motor current:</label>
+						<div class="input-group">
+							<input type="number" id="motor_current" class="form-control" value="800" min="100" max="6300" required="required" title="Usually 60% to 85% of rated current">
+							<span class="input-group-addon">mA</span>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<label for="requested_max_speed">Requested max. speed:</label>
+						<div class="input-group">
+							<input type="number" id="requested_max_speed" class="form-control" min="1" step="any" value="200" required="required">
+							<span class="input-group-addon">mm/s</span>
+						</div>
+					</div>
+					<div class="col-md-4">
+						<label for="num_motors">Number of motors connected in series:</label>
+						<input type="number" id="num_motors" class="form-control" min="1" value="1" required="required">
+					</div>
+				</div>
+
+				<h3>Motor properties</h3>
+				<div id="motor_properties" class="row">
+					<div class="col-md-2">
+						<label for="motor_preset">Motor preset:</label>
+						<select id="motor_preset" class="form-control">
+							<option value="custom">Custom</option>
+							<option value="JK42HS34-1334" selected>JK42HS34-1334</option>
+							<option value="17HS19-1684S">17HS19-1684S</option>
+							<option value="17HS19-2004S">17HS19-2004S</option>
+							<option value="17HM19-1684S">17HM19-1684S</option>
+							<option value="17HM19-2004S">17HM19-2004S</option>
+						</select>
+					</div>
+					<div class="col-md-2">
+						<label for="step_angle">Motor step angle:</label>
+						<select id="step_angle" class="form-control">
+							<option value="0.9">0.9° (400 steps)</option>
+							<option value="1.8" selected>1.8° (200 steps)</option>
+							<option value="7.5">7.5° (48 steps)</option>
+						</select>
+					</div>
+					<div class="col-md-2">
+						<label for="rated_torque">Rated holding torque:</label>
+						<div class="input-group">
+							<input type="number" id="rated_torque" class="form-control" min="0.001" step="any" value="25.5" required="required" title="To convert Kg.cm to N.cm, multiply by 9.81">
+							<span class="input-group-addon">N.cm</span>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<label for="rated_current">Rated current:</label>
+						<div class="input-group">
+							<input type="number" id="rated_current" class="form-control" min="100" max="6300" value="1330" required="required">
+							<span class="input-group-addon">mA</span>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<label for="resistance">Phase resistance:</label>
+						<div class="input-group">
+							<input type="number" id="resistance" class="form-control" min="0.1" step="any" value="2.1" required="required">
+							<span class="input-group-addon">Ω</span>
+						</div>
+					</div>
+					<div class="col-md-2">
+						<label for="inductance">Phase inductance:</label>
+						<div class="input-group">
+							<input type="number" id="inductance" class="form-control" min="0.1" step="any" value="2.5" required="required">
+							<span class="input-group-addon">mH</span>
+						</div>
+					</div>
+				</div>
+
+				<h3>Drive</h3>
+				<div class="row">
+					<div class="col-md-2">
+						<label>Microstepping:</label>
+						<select class="form-control" id="microstepping">
+							<option value="1">x1</option>
+							<option value="2">x2</option>
+							<option value="4">x4</option>
+							<option value="8">x8</option>
+							<option value="16" selected>x16</option>
+							<option value="32">x32</option>
+							<option value="64">x64</option>
+							<option value="128">x128</option>
+							<option value="256">x256</option>
+						</select>
+					</div>
+					<div class="col-md-2">
+						<label>Axis is driven by:</label>
+						<div class="btn-group" data-toggle="buttons">
+							<label class="btn btn-default active">
+								<input type="radio" name="steps_type" value="belt" checked>
+								Belt
+							</label>
+							<label class="btn btn-default">
+								<input type="radio" name="steps_type" value="leadscrew">
+								Leadscrew
+							</label>
+						</div>
+					</div>
+
+					<!-- Belt-driven -->
+					<div id="div_belt" class="step-calculator col-md-6">
+						<div class="row">
+							<div class="col-md-4">
+								<label for="belt_preset">Belt preset:</label>
+								<select id="belt_preset" class="form-control">
+									<option value="2" selected>GT2 (2mm)</option>
+									<option value="2.03">MXL (2.03mm)</option>
+									<option value="2.5">T2.5 (2.5mm)</option>
+									<option value="5">T5 (5mm)</option>
+									<option value="custom" disabled>Custom</option>
+								</select>
+							</div>
+							<div class="col-md-4">
+								<label for="belt_pitch">Belt pitch:</label>
+								<div class="input-group">
+									<input type="number" min="0.1" step="any" value="2" id="belt_pitch" class="form-control">
+									<span class="input-group-addon">mm</span>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<label for="pulley_teeth">Pulley teeth:</label>
+								<input type="number" min="1" value="20" id="pulley_teeth" class="form-control">
+							</div>
+						</div>
+					</div>
+
+					<!-- Leadscrew-driven -->
+					<div id="div_leadscrew" class="step-calculator col-md-6 hidden">
+						<div class="row">
+							<div class="col-md-4">
+								<label for="leadscrew_preset">Leadscrew preset:</label>
+								<select id="leadscrew_preset" class="form-control">
+									<option value="0.8" selected>Metric M5 (0.8mm)</option>
+									<option value="1">Metric M6 (1mm)</option>
+									<option value="1.25">Metric M8 (1.25mm)</option>
+									<option value="custom" disabled>Custom</option>
+								</select>
+							</div>
+							<div class="col-md-4">
+								<label for="leadscrew_lead">Leadscrew lead:</label>
+								<div class="input-group">
+									<input type="number" min="0.01" step="any" value="0.8" id="leadscrew_lead" class="form-control">
+									<span class="input-group-addon">mm</span>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<label for="pulley_teeth">Gear ratio:</label>
+								<table>
+									<tr>
+										<td>
+											<input type="number" min="0.1" step="any" value="1" id="gear_ratio_1" class="form-control">
+										</td>
+										<td>&nbsp;:&nbsp;</td>
+										<td>
+											<input type="number" min="0.1" step="any" value="1" id="gear_ratio_2" class="form-control">
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-2">
+						<label for="steps_per_mm">Steps per mm:</label>
+						<input type="number" min="1" step="any" value="80" id="steps_per_mm" class="form-control">
+					</div>
+				</div>
+
+				<div class="well well-lg">
+					<h3>Approximate peak back <abbr title="Electromotive force. Your supply voltage must exceed this value but never exceed 25V">EMF</abbr> due to rotation per motor: <span id="generated_emf">n/a</span></h3>
+					<h3>Approximate peak back <abbr title="Electromotive force. Your supply voltage must exceed this value but never exceed 25V">EMF</abbr> due to inductance per motor: <span id="generated_emf_inductance">n/a</span></h3>
+					<h3>Step pulse frequency: <span id="step_frequency">n/a</span></h3>
+					<h3>Speed at which torque starts to drop (<abbr title="These are for the worst case moves (diagonal move for CoreXY, radial move opposite a tower for a delta)">low slip angle</abbr>): <span id="max_speed_low">n/a</span></h3>
+					<h3>Speed at which torque starts to drop (<abbr title="These are for the worst case moves (diagonal move for CoreXY, radial move opposite a tower for a delta)">high slip angle</abbr>): <span id="max_speed_high">n/a</span></h3>
+				</div>
+			</form>
+		</div>
+
+		<!-- Include JavaScript files -->
+		<script src="js/jquery-3.2.1.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<script src="js/jquery.flot.min.js"></script>
+		<script src="js/main.js"></script>
+	</body>
+</html>
