@@ -104,13 +104,22 @@
 
 			<form autocomplete="off" action="javascript:void(0);">
 				<h3>Machine configuration</h3>
-				<div class="row">
+				<div class="row" style="display: flex; align-items: end;">
 					<div class="col-md-2">
 						<label for="geometry">Printer geometry:</label>
 						<select id="geometry" class="form-control">
 							<option value="1" selected>Cartesian</option>
 							<option value="1.414">CoreXY</option>
 							<option value="1.7">Delta</option>
+						</select>
+					</div>
+					<div class="col-md-2">
+						<label for="driver_resistance">Stepper Driver:</label>
+						<select id="driver_resistance" class="form-control">
+							<option value="0.14" selected>TMC5160 (Duet 3 MB6HC/EXP3HC/1HCL)</option>
+							<option value="0.14">TMC2160 (Duet 3 Motor 23CL)</option>
+							<option value="0.5">TMC2209 (Duet 3 Mini 5+/1LC)</option>
+							<option value="0.3">TMC2660 (Duet 2 WiFi/Ethernet)</option>
 						</select>
 					</div>
 					<div class="col-md-2">
@@ -134,7 +143,7 @@
 							<span class="input-group-addon">mm/s</span>
 						</div>
 					</div>
-					<div class="col-md-4">
+					<div class="col-md-2">
 						<label for="num_motors">Number of motors connected in series:</label>
 						<input type="number" id="num_motors" class="form-control" min="1" value="1" required="required">
 					</div>
@@ -291,8 +300,8 @@
 				</div>
 
 				<div class="well well-lg">
-					<h3>Approximate peak back <abbr title="Electromotive force. Your supply voltage must exceed this value but never exceed 25V">EMF</abbr> due to rotation per motor: <span id="generated_emf">n/a</span></h3>
-					<h3>Approximate peak back <abbr title="Electromotive force. Your supply voltage must exceed this value but never exceed 25V">EMF</abbr> due to inductance per motor: <span id="generated_emf_inductance">n/a</span></h3>
+					<h3>Approximate total rotational back <abbr title="Electromotive force. Your supply voltage must exceed this value but never exceed 25V">EMF</abbr>: <span id="generated_emf">n/a</span></h3>
+					<h3>Approximate total inductive back <abbr title="Electromotive force. Your supply voltage must exceed this value but never exceed 25V">EMF</abbr>: <span id="generated_emf_inductance">n/a</span></h3>
 					<h3>Step pulse frequency: <span id="step_frequency">n/a</span></h3>
 					<h3>Speed at which torque starts to drop (<abbr title="These are for the worst case moves (diagonal move for CoreXY, radial move opposite a tower for a delta)">low slip angle</abbr>): <span id="max_speed_low">n/a</span></h3>
 					<h3>Speed at which torque starts to drop (<abbr title="These are for the worst case moves (diagonal move for CoreXY, radial move opposite a tower for a delta)">high slip angle</abbr>): <span id="max_speed_high">n/a</span></h3>

@@ -183,6 +183,7 @@ $("#div_emf input, #div_emf select").change(function() {
 function calcEmf() {
 	// Get inputs
 	var geometryFactor = parseFloat($("#geometry").val());
+	var driverResistance = parseFloat($("#driver_resistance").val());
 	var supplyVoltage = parseFloat($("#supply_voltage").val());
 	var requestedMaxSpeed = parseFloat($("#requested_max_speed").val());
 	var numMotors = parseInt($("#num_motors").val());
@@ -194,15 +195,14 @@ function calcEmf() {
 	var ratedCurrent = parseFloat($("#rated_current").val()) / 1000.0;
 	var resistance = parseFloat($("#resistance").val());
 	var inductance = parseFloat($("#inductance").val()) / 1000.0;
-	var driverVoltageDrop = 1;		// typical value is 1V
 
 	var microstepping = parseInt($("#microstepping").val());
 	var stepsPerMm = parseFloat($("#steps_per_mm").val());
 	
-	// Calculate voltage drop
+	// Calculate total voltage drop
 	var voltageDrop = NaN;
 	if (!isNaN(resistance) && !isNaN(motorCurrent)) {
-		voltageDrop = resistance * motorCurrent + driverVoltageDrop;
+		voltageDrop = ((resistance * numMotors) + driverResistance) * motorCurrent;
 	}
 
 	// Calculate max speeds
@@ -211,39 +211,40 @@ function calcEmf() {
 	var inductiveBackEmfPerRevSec = "n/a";
 	var rotationBackEmf = NaN, inductiveBackEmf = NaN;
 	if (!isNaN(motorCurrent) && !isNaN(inductance) && !isNaN(stepAngle) && !isNaN(supplyVoltage) && !isNaN(ratedTorque) && !isNaN(ratedCurrent) && !isNaN(voltageDrop) && !isNaN(stepsPerMm)) {
-		var inductiveBackEmfPerRevSec = Math.PI * motorCurrent * inductance * 180.0 / stepAngle;
-		var motionBackEmfPerRevSec = Math.sqrt(2) * Math.PI * ratedTorque / ratedCurrent;
-		var revsTorqueDropLowSlip = Math.sqrt(supplyVoltage * supplyVoltage - Math.pow(driverVoltageDrop + voltageDrop, 2)) / ((inductiveBackEmfPerRevSec + motionBackEmfPerRevSec) * numMotors);
-		var revsTorqueDropHighSlip = (Math.sqrt(motionBackEmfPerRevSec * motionBackEmfPerRevSec + (motionBackEmfPerRevSec * motionBackEmfPerRevSec + inductiveBackEmfPerRevSec * inductiveBackEmfPerRevSec) * (supplyVoltage * supplyVoltage - Math.pow(voltageDrop + driverVoltageDrop, 2))) - motionBackEmfPerRevSec) / ((motionBackEmfPerRevSec * motionBackEmfPerRevSec + inductiveBackEmfPerRevSec * inductiveBackEmfPerRevSec) * numMotors);
+		var inductiveBackEmfPerRevSec = Math.PI * motorCurrent * inductance * numMotors * 180.0 / stepAngle;
+		var motionBackEmfPerRevSec = Math.sqrt(2) * Math.PI * ratedTorque * numMotors / ratedCurrent;
+		var revsTorqueDropLowSlip = Math.sqrt(supplyVoltage * supplyVoltage - voltageDrop * voltageDrop) / (inductiveBackEmfPerRevSec + motionBackEmfPerRevSec);
+		var sumOfEmfSquares = motionBackEmfPerRevSec * motionBackEmfPerRevSec + inductiveBackEmfPerRevSec * inductiveBackEmfPerRevSec;
+		var revsTorqueDropHighSlip = (Math.sqrt(Math.pow(motionBackEmfPerRevSec * voltageDrop, 2) + sumOfEmfSquares * supplyVoltage * supplyVoltage) - (motionBackEmfPerRevSec * voltageDrop)) / sumOfEmfSquares;
 		var microstepsPerSecTorqueDropLowSlip = revsTorqueDropLowSlip * stepsPerRevolution * microstepping;
 		var microstepsPerSecTorqueDropHighSlip = revsTorqueDropHighSlip * stepsPerRevolution * microstepping;
 		var revsPerSec = requestedMaxSpeed * geometryFactor * (stepsPerMm / microstepping) * (stepAngle / 360);
 
-		/*console.log("inductiveBackEmfPerRevSec: " + inductiveBackEmfPerRevSec);
+		console.log("inductiveBackEmfPerRevSec: " + inductiveBackEmfPerRevSec);
 		console.log("motionBackEmfPerRevSec: " + motionBackEmfPerRevSec + " ratedTorque: " + ratedTorque + " ratedCurrent: " + ratedCurrent);
 		console.log("revsTorqueDropLowSlip: " + revsTorqueDropLowSlip);
 		console.log("revsTorqueDropHighSlip: " + revsTorqueDropHighSlip);
 		console.log("microstepsPerSecTorqueDropLowSlip: " + microstepsPerSecTorqueDropLowSlip);
 		console.log("microstepsPerSecTorqueDropHighSlip: " + microstepsPerSecTorqueDropHighSlip);
-		console.log("revsPerSec: " + revsPerSec);*/
+		console.log("revsPerSec: " + revsPerSec);
 
 		maxSpeedLowSlip = microstepsPerSecTorqueDropLowSlip / (stepsPerMm * geometryFactor);
 		maxFreqLowSlip = maxSpeedLowSlip * stepsPerMm * geometryFactor / 1000.0;
 		maxSpeedHighSlip = microstepsPerSecTorqueDropHighSlip / (stepsPerMm * geometryFactor);
 		maxFreqHighSlip = maxSpeedHighSlip * stepsPerMm * geometryFactor / 1000.0;
 
-		rotationBackEmf = revsPerSec * motionBackEmfPerRevSec;
+		rotationBackEmf = revsPerSec * motionBackEmfPerRevSec * numMotors;
 		if (rotationBackEmf < supplyVoltage) {
 			rotationBackEmf = '<span class="text-success">' + rotationBackEmf.toFixed(1) + ' V</span> at ' + requestedMaxSpeed.toFixed(1) + ' mm/s';
 		} else {
 			rotationBackEmf = '<span class="text-danger">' + rotationBackEmf.toFixed(1) + ' V</span> at ' + requestedMaxSpeed.toFixed(1) + ' mm/s';
 		}
 
-		inductiveBackEmf = revsPerSec * inductiveBackEmfPerRevSec;
+		inductiveBackEmf = revsPerSec * inductiveBackEmfPerRevSec * numMotors;
 		if (inductiveBackEmf < supplyVoltage) {
-			inductiveBackEmf = '<span class="text-success">' + inductiveBackEmf.toFixed(1) + ' V</span> at ' + requestedMaxSpeed.toFixed(1) + ' mm/s';
+			inductiveBackEmf = '<span class="text-success">' + inductiveBackEmf.toFixed(1) + 'V</span> at ' + requestedMaxSpeed.toFixed(1) + ' mm/s';
 		} else {
-			inductiveBackEmf = '<span class="text-danger">' + inductiveBackEmf.toFixed(1) + ' V</span> at ' + requestedMaxSpeed.toFixed(1) + ' mm/s';
+			inductiveBackEmf = '<span class="text-danger">' + inductiveBackEmf.toFixed(1) + 'V</span> at ' + requestedMaxSpeed.toFixed(1) + ' mm/s';
 		}
 	}
 
