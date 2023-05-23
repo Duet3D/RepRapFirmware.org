@@ -53,6 +53,14 @@ var motorPresets = [
 		ratedCurrent: 2000,
 		resistance: 1.4,
 		inductance: 3.0
+	},
+	{
+		name: "LDO 42STH48-2504AC",
+		stepAngle: 1.8,
+		ratedTorque: 55,
+		ratedCurrent: 2500,
+		resistance: 1.2,
+		inductance: 1.5
 	}
 ];
 
