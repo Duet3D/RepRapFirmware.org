@@ -124,7 +124,7 @@
 					<div class="col-md-2">
 						<label for="supply_voltage">Supply voltage:</label>
 						<div class="input-group">
-							<input type="number" id="supply_voltage" class="form-control" value="12" min="5" max="25" step="any" required="required" title="Usually 12 or 24">
+							<input type="number" id="supply_voltage" class="form-control" value="12" min="5" max="60" step="any" required="required" title="Usually 12 or 24">
 							<span class="input-group-addon">V</span>
 						</div>
 					</div>
@@ -299,8 +299,8 @@
 				</div>
 
 				<div class="well well-lg">
-					<h3>Approximate total rotational back <abbr title="Electromotive force. Your supply voltage must exceed this value but never exceed 25V">EMF</abbr>: <span id="generated_emf">n/a</span></h3>
-					<h3>Approximate total inductive back <abbr title="Electromotive force. Your supply voltage must exceed this value but never exceed 25V">EMF</abbr>: <span id="generated_emf_inductance">n/a</span></h3>
+					<h3>Approximate total rotational back <abbr title="Electromotive force. Your supply voltage must exceed this value but never exceed 60V">EMF</abbr>: <span id="generated_emf">n/a</span></h3>
+					<h3>Approximate total inductive back <abbr title="Electromotive force. Your supply voltage must exceed this value but never exceed 60V">EMF</abbr>: <span id="generated_emf_inductance">n/a</span></h3>
 					<h3>Step pulse frequency: <span id="step_frequency">n/a</span></h3>
 					<h3>Speed at which torque starts to drop (<abbr title="These are for the worst case moves (diagonal move for CoreXY, radial move opposite a tower for a delta)">low slip angle</abbr>): <span id="max_speed_low">n/a</span></h3>
 					<h3>Speed at which torque starts to drop (<abbr title="These are for the worst case moves (diagonal move for CoreXY, radial move opposite a tower for a delta)">high slip angle</abbr>): <span id="max_speed_high">n/a</span></h3>
